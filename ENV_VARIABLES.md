@@ -20,6 +20,10 @@ BASE_RPC_URL=https://sepolia.base.org
 # Replicate API (for image generation)
 REPLICATE_API_TOKEN=r8_xxxxxxxxxxxx
 
+# Mock Mode (optional - for testing without Replicate credit)
+# Set to 'true' to use placeholder images instead of calling Replicate API
+REPLICATE_MOCK_MODE=false
+
 # Neynar API (for Farcaster profile data)
 NEYNAR_API_KEY=your_neynar_api_key
 

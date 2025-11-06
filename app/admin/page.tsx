@@ -1,14 +1,6 @@
-'use client';
-
-import { useEffect } from 'react';
-import { sdk } from '@farcaster/miniapp-sdk';
 import AdminPanel from '@/components/AdminPanel';
 
 export default function AdminPage() {
-  useEffect(() => {
-    sdk.actions.ready();
-  }, []);
-
   return (
     <main className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white p-8">
       <div className="max-w-6xl mx-auto">

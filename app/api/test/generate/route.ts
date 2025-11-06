@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { testImageGeneration, testProfiles } from '@/lib/test/imageGenerationTest';
 import { generateTraits } from '@/lib/services/traitGeneration';
 import { buildMetadataForPhase } from '@/lib/types/nftMetadata';
+import { buildPrompt } from '@/lib/services/imageGeneration';
 
 export async function POST(request: NextRequest) {
   try {
@@ -51,7 +52,7 @@ export async function GET(request: NextRequest) {
     const testAddress = '0x1234567890123456789012345678901234567890' as `0x${string}`;
 
     const traits = generateTraits(tokenId, testAddress, profile);
-    const prompt = buildPromptForPhase(phase, traits, profile.avatarUrl);
+    const prompt = buildPrompt(phase, traits, profile.avatarUrl);
 
     return NextResponse.json({
       success: true,
@@ -76,25 +77,4 @@ export async function GET(request: NextRequest) {
   }
 }
 
-function buildPromptForPhase(phase: number, traits: any, avatarUrl?: string): string {
-  const basePrompt = `A unique identity NFT avatar, professional digital art style, high quality, detailed`;
-
-  const phasePrompts: Record<number, (traits: any) => string> = {
-    1: () => `Blind box placeholder`,
-    2: (traits) =>
-      `${basePrompt}, based on profile picture, ${traits.socialTier} tier, transform the avatar into a stylized NFT character`,
-    3: (traits) =>
-      `${basePrompt}, ${traits.backgroundType} background, ${traits.colorScheme.join(' and ')} color scheme, ${traits.socialTier} tier`,
-    4: (traits) =>
-      `${basePrompt}, ${traits.backgroundType} background, with ${traits.accessories.slice(0, 1).join(', ')} accessories, ${traits.colorScheme.join(' and ')} colors`,
-    5: (traits) =>
-      `${basePrompt}, ${traits.activityLevel} activity level, ${traits.backgroundType} background, ${traits.accessories.slice(0, 2).join(', ')} accessories, enhanced details`,
-    6: (traits) =>
-      `${basePrompt}, special effects: ${traits.specialEffects.slice(0, 2).join(', ')}, ${traits.accessories.slice(0, 3).join(', ')} accessories, ${traits.backgroundType} background`,
-    7: (traits) =>
-      `${basePrompt}, final form with all traits: ${traits.accessories.join(', ')}, ${traits.specialEffects.join(', ')}, ${traits.socialTier} tier, ${traits.activityLevel} activity, ${traits.backgroundType} background, ${traits.colorScheme.join(' and ')} color scheme, rarity score ${traits.rarityScore}`,
-  };
-
-  return phasePrompts[phase]?.(traits) || basePrompt;
-}
 

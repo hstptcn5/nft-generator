@@ -1,6 +1,4 @@
 import type { Metadata } from 'next';
-import { OnchainKitProvider } from '@coinbase/onchainkit';
-import { base } from 'wagmi/chains';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -16,13 +14,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <OnchainKitProvider
-          apiKey={process.env.NEXT_PUBLIC_CDP_API_KEY}
-          chain={base}
-          miniKit={{ enabled: true }}
-        >
-          {children}
-        </OnchainKitProvider>
+        {children}
       </body>
     </html>
   );
