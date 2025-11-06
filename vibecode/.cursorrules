@@ -1,0 +1,35 @@
+PROJECT CONTEXT: See /docs/ for detailed context
+TECH STACK: [Your tech stack]
+CODE STYLE: [Your main style preferences]
+COMMUNICATION: [How you want AI to communicate]
+KEY FILES: [Important files to reference]
+ARCHITECTURE: [Your main architectural patterns]
+STRICT CODING RULES:
+- NO EMOJIS in any code, comments, or logs
+- NO MOCKS in testing or implementations
+- Always use real integrations
+- Professional, clean code only
+
+TESTING REQUIREMENTS:
+- Use actual contract instances
+- Prefer integration tests over unit tests with mocks
+- Use forked networks for complex interactions
+
+COMMUNICATION STYLE:
+- When suggesting code, ensure no emojis
+- Provide real implementation examples
+- Avoid "you could mock this" suggestions
+PREFERENCES:
+- Use real contracts and integrations, no mocks
+- No emojis in any code, comments, or logs
+- Provide working code over theoretical explanations
+- Focus on practical implementation
+- Suggest better patterns when you see improvements
+- Be direct about trade-offs
+
+AVOID:
+- Using mocks in tests
+- Using emojis in code
+- Over-explaining basics I know
+- Theoretical deep dives without code
+- Making assumptions without asking

@@ -1,0 +1,236 @@
+# FRONTEND PATTERNS FOR BASE PROJECTS
+
+## ONCHAINKIT TRANSACTION PATTERN
+
+```typescript
+// PREFERRED: Using OnchainKit Transaction component
+'use client';
+
+import { Transaction } from '@coinbase/onchainkit/transaction';
+import { calls } from '@/lib/calls';
+
+export default function TransactionPage() {
+  return (
+    <div>
+      <Transaction 
+        calls={calls} 
+        sponsorGas={true} 
+      />
+    </div>
+  );
+}
+
+// AVOID: Manual transaction handling when OnchainKit can do it
+// AVOID: Mocking contract responses or transaction states
+```
+
+## WAGMI HOOKS PATTERN
+
+```typescript
+// PREFERRED: Using Wagmi hooks with proper error handling
+'use client';
+
+import { useAccount, useReadContract, useWriteContract } from 'wagmi';
+import { base } from 'wagmi/chains';
+
+export default function ContractInteraction() {
+  const { address, isConnected } = useAccount();
+  const { data, isLoading } = useReadContract({
+    address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS,
+    abi: contractAbi,
+    functionName: 'number',
+    chainId: base.id,
+  });
+
+  const { writeContract, isPending } = useWriteContract();
+
+  const handleIncrement = async () => {
+    try {
+      await writeContract({
+        address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS,
+        abi: contractAbi,
+        functionName: 'increment',
+        chainId: base.id,
+      });
+    } catch (error) {
+      console.error('Transaction failed:', error);
+    }
+  };
+
+  if (!isConnected) return <div>Please connect wallet</div>;
+  if (isLoading) return <div>Loading...</div>;
+
+  return (
+    <div>
+      <p>Current number: {data?.toString()}</p>
+      <button 
+        onClick={handleIncrement} 
+        disabled={isPending}
+      >
+        {isPending ? 'Processing...' : 'Increment'}
+      </button>
+    </div>
+  );
+}
+
+// AVOID: Mocking useAccount or useReadContract responses
+// AVOID: Not handling loading and error states
+```
+
+## BASE ACCOUNT AUTHENTICATION PATTERN
+
+```typescript
+// PREFERRED: Base Account SDK integration
+'use client';
+
+import { createBaseAccountSDK } from '@base-org/account';
+import { useState } from 'react';
+
+export default function AuthPage() {
+  const [isSignedIn, setIsSignedIn] = useState(false);
+  
+  const sdk = createBaseAccountSDK({
+    appName: 'My Base App',
+    appLogoUrl: 'https://example.com/logo.png',
+  });
+
+  const handleSignIn = async () => {
+    try {
+      await sdk.getProvider().request({ method: 'wallet_connect' });
+      setIsSignedIn(true);
+    } catch (error) {
+      console.error('Sign in failed:', error);
+    }
+  };
+
+  return (
+    <div>
+      {!isSignedIn ? (
+        <button onClick={handleSignIn}>Sign in with Base</button>
+      ) : (
+        <div>Signed in successfully</div>
+      )}
+    </div>
+  );
+}
+
+// AVOID: Mocking Base Account SDK or provider responses
+```
+
+## MINI APP PATTERN
+
+```typescript
+// PREFERRED: Mini App with proper ready() call
+'use client';
+
+import { sdk } from '@farcaster/miniapp-sdk';
+import { useEffect } from 'react';
+import { useAccount } from 'wagmi';
+
+export default function MiniAppPage() {
+  const { address } = useAccount();
+
+  useEffect(() => {
+    sdk.actions.ready();
+  }, []);
+
+  return (
+    <div>
+      <h1>Mini App</h1>
+      {address && <p>Connected: {address}</p>}
+    </div>
+  );
+}
+
+// AVOID: Calling ready() multiple times or in render
+// AVOID: Not using useEffect for ready() call
+```
+
+## PAYMENT PATTERN WITH BASE PAY
+
+```typescript
+// PREFERRED: Base Pay integration
+'use client';
+
+import { pay, getPaymentStatus } from '@base-org/account';
+import { useState } from 'react';
+
+export default function PaymentPage() {
+  const [paymentId, setPaymentId] = useState<string | null>(null);
+  const [status, setStatus] = useState<string>('');
+
+  const handlePayment = async () => {
+    try {
+      const { id } = await pay({
+        amount: '5.00',
+        to: '0xRecipientAddress',
+        testnet: true,
+      });
+      setPaymentId(id);
+      setStatus('Payment initiated');
+    } catch (error) {
+      console.error('Payment failed:', error);
+      setStatus('Payment failed');
+    }
+  };
+
+  const checkStatus = async () => {
+    if (!paymentId) return;
+    try {
+      const { status: paymentStatus } = await getPaymentStatus({ id: paymentId });
+      setStatus(`Payment status: ${paymentStatus}`);
+    } catch (error) {
+      console.error('Status check failed:', error);
+    }
+  };
+
+  return (
+    <div>
+      <button onClick={handlePayment}>Pay 5 USDC</button>
+      {paymentId && (
+        <button onClick={checkStatus}>Check Status</button>
+      )}
+      {status && <p>{status}</p>}
+    </div>
+  );
+}
+
+// AVOID: Mocking payment responses
+// AVOID: Not handling payment errors
+```
+
+## CONTRACT CALLS CONFIGURATION
+
+```typescript
+// PREFERRED: Typed contract calls configuration
+// lib/calls.ts
+const counterContractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS;
+const counterContractAbi = [
+  {
+    type: 'function',
+    name: 'increment',
+    inputs: [],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'number',
+    inputs: [],
+    outputs: [{ type: 'uint256', name: '' }],
+    stateMutability: 'view',
+  },
+] as const;
+
+export const calls = [
+  {
+    address: counterContractAddress,
+    abi: counterContractAbi,
+    functionName: 'increment',
+    args: [],
+  },
+];
+
+// AVOID: Hardcoded addresses, untyped ABIs
+// AVOID: Missing environment variable validation
+```

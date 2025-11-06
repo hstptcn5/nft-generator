@@ -1,0 +1,63 @@
+# FILE STRUCTURE FOR BASE PROJECTS
+
+## STANDARD NEXT.JS + ONCHAINKIT STRUCTURE
+
+```
+project-root/
+├── app/                    # Next.js App Router
+│   ├── layout.tsx         # OnchainKitProvider setup
+│   ├── page.tsx           # Main page
+│   └── .well-known/       # Mini App manifest (for mini apps)
+│       └── farcaster.json
+├── contracts/             # Foundry smart contract project
+│   ├── src/
+│   │   └── Counter.sol    # Smart contracts
+│   ├── script/
+│   │   └── Deploy.s.sol   # Deployment scripts
+│   ├── test/
+│   │   └── Counter.t.sol  # Contract tests
+│   ├── foundry.toml       # Foundry config
+│   └── .env               # RPC URLs, private keys (never commit)
+├── lib/                   # Utility functions
+│   ├── calls.ts          # Contract interaction configs
+│   ├── constants.ts      # Contract addresses, ABIs
+│   └── utils.ts          # Helper functions
+├── components/           # React components
+│   ├── ui/              # OnchainKit components usage
+│   └── custom/           # Custom components
+├── hooks/                # Custom React hooks
+│   └── useContract.ts    # Contract interaction hooks
+├── .env.local           # Frontend environment variables
+│                        # NEXT_PUBLIC_CDP_API_KEY
+│                        # NEXT_PUBLIC_CONTRACT_ADDRESS
+├── minikit.config.ts    # Mini App manifest config (mini apps only)
+├── wagmi.ts             # Wagmi config (if custom setup)
+└── package.json
+```
+
+## MINI APP SPECIFIC STRUCTURE
+
+```
+mini-app/
+├── app/
+│   ├── layout.tsx        # OnchainKitProvider with miniKit enabled
+│   ├── page.tsx          # Main page with sdk.actions.ready()
+│   └── .well-known/
+│       └── farcaster.json # Generated from minikit.config.ts
+├── minikit.config.ts     # Manifest and account association
+└── ... (other Next.js files)
+```
+
+## SMART CONTRACT STRUCTURE (FOUNDRY)
+
+```
+contracts/
+├── src/
+│   └── YourContract.sol
+├── script/
+│   └── Deploy.s.sol
+├── test/
+│   └── YourContract.t.sol
+├── foundry.toml
+└── .env
+```
