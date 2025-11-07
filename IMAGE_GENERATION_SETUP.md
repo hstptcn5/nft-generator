@@ -22,6 +22,40 @@
 - Pay-as-you-go
 - No subscription required
 
+### Pollinations.ai (Free Tier)
+
+#### Khi nào dùng
+- Muốn test nhanh không tốn phí
+- Không cần đăng ký tài khoản hoặc API key
+- Chấp nhận chất lượng thấp hơn và hình ảnh công khai
+
+#### Setup
+1. Không cần tạo tài khoản
+2. Cập nhật `.env.local`:
+   ```
+   NFT_IMAGE_PROVIDER=pollinations
+   # Tuỳ chọn: override style chung
+   NFT_IMAGE_STYLE_PROMPT="A cute, stylized anime illustration of a heroic digital explorer, soft lighting"
+   # Tuỳ chọn: chỉnh độ giữ nét khi dùng ảnh phase trước (0.1 - 0.8)
+   NFT_IMAGE_IMG2IMG_STRENGTH=0.35
+   ```
+3. Khởi động lại server dev (`npm run dev`)
+
+#### Lưu ý
+- URL được tạo bởi Pollinations là ảnh public, bất kỳ ai có link đều xem được
+- `init_image` (phase 2) có thể không luôn chính xác; nếu avatar không render được, hệ thống fallback sang prompt thuần
+- Không bật `REPLICATE_MOCK_MODE` khi dùng provider này (tuân thủ "Don't use mock")
+- Phase > 2 sẽ dùng lại ảnh phase trước thông qua image-to-image (`init_image`), strength mặc định 0.35 giúp giữ khuôn mặt và style thống nhất
+
+### Chuỗi Reveal Giữ Nguyên Style
+
+1. **Phase 1**: Blind box (placeholder)
+2. **Phase 2**: Img2Img từ avatar Farcaster (`strength=0.7`)
+3. **Phase 3-7**: Img2Img từ ảnh phase trước (`strength=NFT_IMAGE_IMG2IMG_STRENGTH`, mặc định 0.35)
+   - Thêm background, accessories, effects dần dần nhưng vẫn giữ nét nhân vật cũ
+   - Nếu thiếu ảnh phase trước, hệ thống fallback sang generate text-to-image như cũ
+4. Có thể giảm `NFT_IMAGE_IMG2IMG_STRENGTH` để bám sát ảnh cũ hơn, hoặc tăng (tối đa ~0.8) nếu muốn thay đổi mạnh
+
 ### Alternative: Stability AI
 
 #### Setup
@@ -152,6 +186,15 @@ const seed = keccak256(
 Add to `.env.local`:
 
 ```bash
+# Image provider (replicate | pollinations)
+NFT_IMAGE_PROVIDER=replicate
+
+# Base style prompt (giữ nguyên nếu muốn mặc định anime dễ thương)
+NFT_IMAGE_STYLE_PROMPT="A cute, stylized anime illustration of a heroic digital explorer, soft lighting, vibrant colors, clean line art, expressive face, high quality"
+
+# Image-to-image strength (0.1-0.8). Giảm để giữ nét phase trước, tăng để đổi mới hơn
+NFT_IMAGE_IMG2IMG_STRENGTH=0.35
+
 # Replicate API
 REPLICATE_API_TOKEN=r8_xxxxxxxxxxxx
 
@@ -199,6 +242,7 @@ Webhook triggered: /api/webhook
 npm run dev
 
 # Test generation endpoint
+# (Sử dụng Pollinations miễn phí → đảm bảo đặt NFT_IMAGE_PROVIDER=pollinations)
 curl -X POST http://localhost:3000/api/nft/generate \
   -H "Content-Type: application/json" \
   -d '{
@@ -213,7 +257,8 @@ curl -X POST http://localhost:3000/api/nft/generate \
       "specialEffects": [],
       "rarityScore": 50
     },
-    "farcasterAvatar": "https://..."
+    "farcasterAvatar": "https://...",
+    "previousImageUrl": "https://..." # phase > 2: truyền ảnh phase trước để giữ style
   }'
 ```
 

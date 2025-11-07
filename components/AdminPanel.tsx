@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { BLIND_BOX_IMAGE_URL } from '@/lib/constants';
 import { generateTraits } from '@/lib/services/traitGeneration';
 import { testProfiles } from '@/lib/test/imageGenerationTest';
 
@@ -196,7 +197,7 @@ export default function AdminPanel() {
                 alt="Generated NFT"
                 className="w-full max-w-md rounded-lg"
                 onError={(e) => {
-                  e.currentTarget.src = '/images/blind-box.png';
+                  e.currentTarget.src = BLIND_BOX_IMAGE_URL;
                 }}
               />
               <p className="text-xs text-gray-400 mt-2 break-all">{result.imageUrl}</p>

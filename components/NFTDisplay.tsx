@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useReadContract } from 'wagmi';
 import { base } from 'wagmi/chains';
-import { IDENTITY_NFT_ABI } from '@/lib/constants';
+import { BLIND_BOX_IMAGE_URL, IDENTITY_NFT_ABI } from '@/lib/constants';
 import { useAccount } from 'wagmi';
 
 interface NFTDisplayProps {
@@ -139,7 +139,7 @@ export default function NFTDisplay({ address }: NFTDisplayProps) {
                   alt={metadata.name}
                   className="w-full rounded-lg aspect-square object-cover"
                   onError={(e) => {
-                    e.currentTarget.src = '/images/blind-box.png';
+                    e.currentTarget.src = BLIND_BOX_IMAGE_URL;
                   }}
                 />
               </div>

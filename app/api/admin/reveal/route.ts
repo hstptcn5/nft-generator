@@ -52,6 +52,8 @@ export async function POST(request: NextRequest) {
       phase,
       traits: nftData.traits,
       farcasterAvatar: nftData.profile.avatarUrl,
+      previousImageUrl:
+        phase > 2 ? nftData.imageUrl || nftData.metadata?.image : undefined,
     });
 
     const metadata = buildMetadataForPhase(tokenId, phase, nftData.traits, imageUrl);

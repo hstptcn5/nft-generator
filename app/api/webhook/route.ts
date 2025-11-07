@@ -79,6 +79,10 @@ async function handleRevealEvent(tokenId: number) {
       phase: newPhase,
       traits: nftData.traits,
       farcasterAvatar: nftData.profile.avatarUrl,
+      previousImageUrl:
+        newPhase > 2
+          ? nftData.imageUrl || nftData.metadata?.image
+          : undefined,
     });
 
     const metadata = buildMetadataForPhase(

@@ -4,7 +4,7 @@ import { generateNFTImage, uploadToIPFS } from '@/lib/services/imageGeneration';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { tokenId, phase, traits, farcasterAvatar } = body;
+    const { tokenId, phase, traits, farcasterAvatar, previousImageUrl } = body;
 
     if (!tokenId || !phase || !traits) {
       return NextResponse.json(
@@ -18,6 +18,7 @@ export async function POST(request: NextRequest) {
       phase,
       traits,
       farcasterAvatar,
+      previousImageUrl,
     });
 
     const ipfsUrl = await uploadToIPFS(imageUrl);

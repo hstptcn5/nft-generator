@@ -4,6 +4,7 @@ import { base } from 'viem/chains';
 import { createPublicClient, http } from 'viem';
 import { IDENTITY_NFT_ABI } from '@/lib/constants';
 import { buildMetadataForPhase } from '@/lib/types/nftMetadata';
+import { getBlindBoxImage } from '@/lib/services/imageGeneration';
 import { generateTraits } from '@/lib/services/traitGeneration';
 
 const publicClient = createPublicClient({
@@ -123,7 +124,7 @@ async function generateImageForPhase(
     return data.imageUrl;
   } catch (error) {
     console.error('Image generation failed:', error);
-    return process.env.NEXT_PUBLIC_BLIND_BOX_IMAGE_URL || '/images/blind-box.png';
+    return getBlindBoxImage();
   }
 }
 
